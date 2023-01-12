@@ -58,13 +58,14 @@ let WHITELIST: string[] = [
   '0x0000000000085d4780b73119b644ae5ecd22b376', // TUSD
   '0x9f8f72aa9304c8b593d555f12ef6589cc3a579a2', // MKR
   '0xc00e94cb662c3520282e6f5717214004a7f26888', // COMP
-  '0x514910771af9ca656af840dff83e8264ecf986ca', //LINK
-  '0xc011a73ee8576fb46f5e1c5751ca3b9fe0af2a6f', //SNX
-  '0x0bc529c00c6401aef6d220be8c6ea1667f6ad93e', //YFI
+  '0x514910771af9ca656af840dff83e8264ecf986ca', // LINK
+  '0xc011a73ee8576fb46f5e1c5751ca3b9fe0af2a6f', // SNX
+  '0x0bc529c00c6401aef6d220be8c6ea1667f6ad93e', // YFI
   '0x853d955acef822db058eb8505911ed77f175b99e', // FRAX
   '0xa47c8bf37f92abed4a126bda807a7b7498661acd', // WUST
   '0x1f9840a85d5af5bf1d1762f925bdaddc4201f984', // UNI
   '0x2260fac5e5542a773aa44fbcfedf7c193bc2c599', // WBTC
+  '0x5E8422345238F34275888049021821E8E08CAa1f', // FRAX ETH
 ]
 
 // minimum liquidity required to count towards tracked volume for pairs with small # of Lps
