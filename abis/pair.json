@@ -680,6 +680,13 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "feeRatio",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "constant": false,
     "inputs": [
       {

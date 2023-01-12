@@ -15,6 +15,28 @@ import {
   CallResult
 } from "@graphprotocol/graph-ts";
 
+export class OperatorStatus extends EthereumEvent {
+  get params(): OperatorStatus__Params {
+    return new OperatorStatus__Params(this);
+  }
+}
+
+export class OperatorStatus__Params {
+  _event: OperatorStatus;
+
+  constructor(event: OperatorStatus) {
+    this._event = event;
+  }
+
+  get operator(): Address {
+    return this._event.parameters[0].value.toAddress();
+  }
+
+  get state(): boolean {
+    return this._event.parameters[1].value.toBoolean();
+  }
+}
+
 export class PairCreated extends EthereumEvent {
   get params(): PairCreated__Params {
     return new PairCreated__Params(this);
@@ -88,19 +110,70 @@ export class Factory extends SmartContract {
     return CallResult.fromValue(value[0].toBigInt());
   }
 
-  createPair(tokenA: Address, tokenB: Address): Address {
+  childInterfaceAddress(): Address {
+    let result = super.call("childInterfaceAddress", []);
+
+    return result[0].toAddress();
+  }
+
+  try_childInterfaceAddress(): CallResult<Address> {
+    let result = super.tryCall("childInterfaceAddress", []);
+    if (result.reverted) {
+      return new CallResult();
+    }
+    let value = result.value;
+    return CallResult.fromValue(value[0].toAddress());
+  }
+
+  childSubImplementationAddress(): Address {
+    let result = super.call("childSubImplementationAddress", []);
+
+    return result[0].toAddress();
+  }
+
+  try_childSubImplementationAddress(): CallResult<Address> {
+    let result = super.tryCall("childSubImplementationAddress", []);
+    if (result.reverted) {
+      return new CallResult();
+    }
+    let value = result.value;
+    return CallResult.fromValue(value[0].toAddress());
+  }
+
+  createFees(): Address {
+    let result = super.call("createFees", []);
+
+    return result[0].toAddress();
+  }
+
+  try_createFees(): CallResult<Address> {
+    let result = super.tryCall("createFees", []);
+    if (result.reverted) {
+      return new CallResult();
+    }
+    let value = result.value;
+    return CallResult.fromValue(value[0].toAddress());
+  }
+
+  createPair(tokenA: Address, tokenB: Address, stable: boolean): Address {
     let result = super.call("createPair", [
       EthereumValue.fromAddress(tokenA),
-      EthereumValue.fromAddress(tokenB)
+      EthereumValue.fromAddress(tokenB),
+      EthereumValue.fromBoolean(stable)
     ]);
 
     return result[0].toAddress();
   }
 
-  try_createPair(tokenA: Address, tokenB: Address): CallResult<Address> {
+  try_createPair(
+    tokenA: Address,
+    tokenB: Address,
+    stable: boolean
+  ): CallResult<Address> {
     let result = super.tryCall("createPair", [
       EthereumValue.fromAddress(tokenA),
-      EthereumValue.fromAddress(tokenB)
+      EthereumValue.fromAddress(tokenB),
+      EthereumValue.fromBoolean(stable)
     ]);
     if (result.reverted) {
       return new CallResult();
@@ -109,29 +182,14 @@ export class Factory extends SmartContract {
     return CallResult.fromValue(value[0].toAddress());
   }
 
-  feeTo(): Address {
-    let result = super.call("feeTo", []);
+  feesFactory(): Address {
+    let result = super.call("feesFactory", []);
 
     return result[0].toAddress();
   }
 
-  try_feeTo(): CallResult<Address> {
-    let result = super.tryCall("feeTo", []);
-    if (result.reverted) {
-      return new CallResult();
-    }
-    let value = result.value;
-    return CallResult.fromValue(value[0].toAddress());
-  }
-
-  feeToSetter(): Address {
-    let result = super.call("feeToSetter", []);
-
-    return result[0].toAddress();
-  }
-
-  try_feeToSetter(): CallResult<Address> {
-    let result = super.tryCall("feeToSetter", []);
+  try_feesFactory(): CallResult<Address> {
+    let result = super.tryCall("feesFactory", []);
     if (result.reverted) {
       return new CallResult();
     }
@@ -165,35 +223,210 @@ export class Factory extends SmartContract {
     let value = result.value;
     return CallResult.fromValue(value[0].toAddress());
   }
-}
 
-export class ConstructorCall extends EthereumCall {
-  get inputs(): ConstructorCall__Inputs {
-    return new ConstructorCall__Inputs(this);
+  governanceAddress(): Address {
+    let result = super.call("governanceAddress", []);
+
+    return result[0].toAddress();
   }
 
-  get outputs(): ConstructorCall__Outputs {
-    return new ConstructorCall__Outputs(this);
+  try_governanceAddress(): CallResult<Address> {
+    let result = super.tryCall("governanceAddress", []);
+    if (result.reverted) {
+      return new CallResult();
+    }
+    let value = result.value;
+    return CallResult.fromValue(value[0].toAddress());
+  }
+
+  interfaceSourceAddress(): Address {
+    let result = super.call("interfaceSourceAddress", []);
+
+    return result[0].toAddress();
+  }
+
+  try_interfaceSourceAddress(): CallResult<Address> {
+    let result = super.tryCall("interfaceSourceAddress", []);
+    if (result.reverted) {
+      return new CallResult();
+    }
+    let value = result.value;
+    return CallResult.fromValue(value[0].toAddress());
+  }
+
+  isOperator(param0: Address): boolean {
+    let result = super.call("isOperator", [EthereumValue.fromAddress(param0)]);
+
+    return result[0].toBoolean();
+  }
+
+  try_isOperator(param0: Address): CallResult<boolean> {
+    let result = super.tryCall("isOperator", [
+      EthereumValue.fromAddress(param0)
+    ]);
+    if (result.reverted) {
+      return new CallResult();
+    }
+    let value = result.value;
+    return CallResult.fromValue(value[0].toBoolean());
+  }
+
+  isPair(param0: Address): boolean {
+    let result = super.call("isPair", [EthereumValue.fromAddress(param0)]);
+
+    return result[0].toBoolean();
+  }
+
+  try_isPair(param0: Address): CallResult<boolean> {
+    let result = super.tryCall("isPair", [EthereumValue.fromAddress(param0)]);
+    if (result.reverted) {
+      return new CallResult();
+    }
+    let value = result.value;
+    return CallResult.fromValue(value[0].toBoolean());
+  }
+
+  isPaused(): boolean {
+    let result = super.call("isPaused", []);
+
+    return result[0].toBoolean();
+  }
+
+  try_isPaused(): CallResult<boolean> {
+    let result = super.tryCall("isPaused", []);
+    if (result.reverted) {
+      return new CallResult();
+    }
+    let value = result.value;
+    return CallResult.fromValue(value[0].toBoolean());
+  }
+
+  pairCodeHash(): Bytes {
+    let result = super.call("pairCodeHash", []);
+
+    return result[0].toBytes();
+  }
+
+  try_pairCodeHash(): CallResult<Bytes> {
+    let result = super.tryCall("pairCodeHash", []);
+    if (result.reverted) {
+      return new CallResult();
+    }
+    let value = result.value;
+    return CallResult.fromValue(value[0].toBytes());
+  }
+
+  poolSpecificFees(param0: Address): BigInt {
+    let result = super.call("poolSpecificFees", [
+      EthereumValue.fromAddress(param0)
+    ]);
+
+    return result[0].toBigInt();
+  }
+
+  try_poolSpecificFees(param0: Address): CallResult<BigInt> {
+    let result = super.tryCall("poolSpecificFees", [
+      EthereumValue.fromAddress(param0)
+    ]);
+    if (result.reverted) {
+      return new CallResult();
+    }
+    let value = result.value;
+    return CallResult.fromValue(value[0].toBigInt());
+  }
+
+  poolSpecificFeesEnabled(param0: Address): boolean {
+    let result = super.call("poolSpecificFeesEnabled", [
+      EthereumValue.fromAddress(param0)
+    ]);
+
+    return result[0].toBoolean();
+  }
+
+  try_poolSpecificFeesEnabled(param0: Address): CallResult<boolean> {
+    let result = super.tryCall("poolSpecificFeesEnabled", [
+      EthereumValue.fromAddress(param0)
+    ]);
+    if (result.reverted) {
+      return new CallResult();
+    }
+    let value = result.value;
+    return CallResult.fromValue(value[0].toBoolean());
+  }
+
+  stableFees(): BigInt {
+    let result = super.call("stableFees", []);
+
+    return result[0].toBigInt();
+  }
+
+  try_stableFees(): CallResult<BigInt> {
+    let result = super.tryCall("stableFees", []);
+    if (result.reverted) {
+      return new CallResult();
+    }
+    let value = result.value;
+    return CallResult.fromValue(value[0].toBigInt());
+  }
+
+  volatileFees(): BigInt {
+    let result = super.call("volatileFees", []);
+
+    return result[0].toBigInt();
+  }
+
+  try_volatileFees(): CallResult<BigInt> {
+    let result = super.tryCall("volatileFees", []);
+    if (result.reverted) {
+      return new CallResult();
+    }
+    let value = result.value;
+    return CallResult.fromValue(value[0].toBigInt());
+  }
+
+  voter(): Address {
+    let result = super.call("voter", []);
+
+    return result[0].toAddress();
+  }
+
+  try_voter(): CallResult<Address> {
+    let result = super.tryCall("voter", []);
+    if (result.reverted) {
+      return new CallResult();
+    }
+    let value = result.value;
+    return CallResult.fromValue(value[0].toAddress());
   }
 }
 
-export class ConstructorCall__Inputs {
-  _call: ConstructorCall;
+export class CreateFeesCall extends EthereumCall {
+  get inputs(): CreateFeesCall__Inputs {
+    return new CreateFeesCall__Inputs(this);
+  }
 
-  constructor(call: ConstructorCall) {
+  get outputs(): CreateFeesCall__Outputs {
+    return new CreateFeesCall__Outputs(this);
+  }
+}
+
+export class CreateFeesCall__Inputs {
+  _call: CreateFeesCall;
+
+  constructor(call: CreateFeesCall) {
+    this._call = call;
+  }
+}
+
+export class CreateFeesCall__Outputs {
+  _call: CreateFeesCall;
+
+  constructor(call: CreateFeesCall) {
     this._call = call;
   }
 
-  get _feeToSetter(): Address {
-    return this._call.inputValues[0].value.toAddress();
-  }
-}
-
-export class ConstructorCall__Outputs {
-  _call: ConstructorCall;
-
-  constructor(call: ConstructorCall) {
-    this._call = call;
+  get fees(): Address {
+    return this._call.outputValues[0].value.toAddress();
   }
 }
 
@@ -221,6 +454,10 @@ export class CreatePairCall__Inputs {
   get tokenB(): Address {
     return this._call.inputValues[1].value.toAddress();
   }
+
+  get stable(): boolean {
+    return this._call.inputValues[2].value.toBoolean();
+  }
 }
 
 export class CreatePairCall__Outputs {
@@ -235,62 +472,254 @@ export class CreatePairCall__Outputs {
   }
 }
 
-export class SetFeeToCall extends EthereumCall {
-  get inputs(): SetFeeToCall__Inputs {
-    return new SetFeeToCall__Inputs(this);
+export class InitializeCall extends EthereumCall {
+  get inputs(): InitializeCall__Inputs {
+    return new InitializeCall__Inputs(this);
   }
 
-  get outputs(): SetFeeToCall__Outputs {
-    return new SetFeeToCall__Outputs(this);
+  get outputs(): InitializeCall__Outputs {
+    return new InitializeCall__Outputs(this);
   }
 }
 
-export class SetFeeToCall__Inputs {
-  _call: SetFeeToCall;
+export class InitializeCall__Inputs {
+  _call: InitializeCall;
 
-  constructor(call: SetFeeToCall) {
+  constructor(call: InitializeCall) {
     this._call = call;
   }
 
-  get _feeTo(): Address {
+  get _feesFactory(): Address {
     return this._call.inputValues[0].value.toAddress();
   }
 }
 
-export class SetFeeToCall__Outputs {
-  _call: SetFeeToCall;
+export class InitializeCall__Outputs {
+  _call: InitializeCall;
 
-  constructor(call: SetFeeToCall) {
+  constructor(call: InitializeCall) {
     this._call = call;
   }
 }
 
-export class SetFeeToSetterCall extends EthereumCall {
-  get inputs(): SetFeeToSetterCall__Inputs {
-    return new SetFeeToSetterCall__Inputs(this);
+export class SetOperatorCall extends EthereumCall {
+  get inputs(): SetOperatorCall__Inputs {
+    return new SetOperatorCall__Inputs(this);
   }
 
-  get outputs(): SetFeeToSetterCall__Outputs {
-    return new SetFeeToSetterCall__Outputs(this);
+  get outputs(): SetOperatorCall__Outputs {
+    return new SetOperatorCall__Outputs(this);
   }
 }
 
-export class SetFeeToSetterCall__Inputs {
-  _call: SetFeeToSetterCall;
+export class SetOperatorCall__Inputs {
+  _call: SetOperatorCall;
 
-  constructor(call: SetFeeToSetterCall) {
+  constructor(call: SetOperatorCall) {
     this._call = call;
   }
 
-  get _feeToSetter(): Address {
+  get operator(): Address {
+    return this._call.inputValues[0].value.toAddress();
+  }
+
+  get state(): boolean {
+    return this._call.inputValues[1].value.toBoolean();
+  }
+}
+
+export class SetOperatorCall__Outputs {
+  _call: SetOperatorCall;
+
+  constructor(call: SetOperatorCall) {
+    this._call = call;
+  }
+}
+
+export class SetPauseCall extends EthereumCall {
+  get inputs(): SetPauseCall__Inputs {
+    return new SetPauseCall__Inputs(this);
+  }
+
+  get outputs(): SetPauseCall__Outputs {
+    return new SetPauseCall__Outputs(this);
+  }
+}
+
+export class SetPauseCall__Inputs {
+  _call: SetPauseCall;
+
+  constructor(call: SetPauseCall) {
+    this._call = call;
+  }
+
+  get _state(): boolean {
+    return this._call.inputValues[0].value.toBoolean();
+  }
+}
+
+export class SetPauseCall__Outputs {
+  _call: SetPauseCall;
+
+  constructor(call: SetPauseCall) {
+    this._call = call;
+  }
+}
+
+export class SetPoolSpecificFeesCall extends EthereumCall {
+  get inputs(): SetPoolSpecificFeesCall__Inputs {
+    return new SetPoolSpecificFeesCall__Inputs(this);
+  }
+
+  get outputs(): SetPoolSpecificFeesCall__Outputs {
+    return new SetPoolSpecificFeesCall__Outputs(this);
+  }
+}
+
+export class SetPoolSpecificFeesCall__Inputs {
+  _call: SetPoolSpecificFeesCall;
+
+  constructor(call: SetPoolSpecificFeesCall) {
+    this._call = call;
+  }
+
+  get _pool(): Address {
+    return this._call.inputValues[0].value.toAddress();
+  }
+
+  get _fees(): BigInt {
+    return this._call.inputValues[1].value.toBigInt();
+  }
+
+  get _enabled(): boolean {
+    return this._call.inputValues[2].value.toBoolean();
+  }
+}
+
+export class SetPoolSpecificFeesCall__Outputs {
+  _call: SetPoolSpecificFeesCall;
+
+  constructor(call: SetPoolSpecificFeesCall) {
+    this._call = call;
+  }
+}
+
+export class SetStableFeesCall extends EthereumCall {
+  get inputs(): SetStableFeesCall__Inputs {
+    return new SetStableFeesCall__Inputs(this);
+  }
+
+  get outputs(): SetStableFeesCall__Outputs {
+    return new SetStableFeesCall__Outputs(this);
+  }
+}
+
+export class SetStableFeesCall__Inputs {
+  _call: SetStableFeesCall;
+
+  constructor(call: SetStableFeesCall) {
+    this._call = call;
+  }
+
+  get _stableFees(): BigInt {
+    return this._call.inputValues[0].value.toBigInt();
+  }
+}
+
+export class SetStableFeesCall__Outputs {
+  _call: SetStableFeesCall;
+
+  constructor(call: SetStableFeesCall) {
+    this._call = call;
+  }
+}
+
+export class SetVolatileFeesCall extends EthereumCall {
+  get inputs(): SetVolatileFeesCall__Inputs {
+    return new SetVolatileFeesCall__Inputs(this);
+  }
+
+  get outputs(): SetVolatileFeesCall__Outputs {
+    return new SetVolatileFeesCall__Outputs(this);
+  }
+}
+
+export class SetVolatileFeesCall__Inputs {
+  _call: SetVolatileFeesCall;
+
+  constructor(call: SetVolatileFeesCall) {
+    this._call = call;
+  }
+
+  get _volatileFees(): BigInt {
+    return this._call.inputValues[0].value.toBigInt();
+  }
+}
+
+export class SetVolatileFeesCall__Outputs {
+  _call: SetVolatileFeesCall;
+
+  constructor(call: SetVolatileFeesCall) {
+    this._call = call;
+  }
+}
+
+export class UpdateChildInterfaceAddressCall extends EthereumCall {
+  get inputs(): UpdateChildInterfaceAddressCall__Inputs {
+    return new UpdateChildInterfaceAddressCall__Inputs(this);
+  }
+
+  get outputs(): UpdateChildInterfaceAddressCall__Outputs {
+    return new UpdateChildInterfaceAddressCall__Outputs(this);
+  }
+}
+
+export class UpdateChildInterfaceAddressCall__Inputs {
+  _call: UpdateChildInterfaceAddressCall;
+
+  constructor(call: UpdateChildInterfaceAddressCall) {
+    this._call = call;
+  }
+
+  get _childInterfaceAddress(): Address {
     return this._call.inputValues[0].value.toAddress();
   }
 }
 
-export class SetFeeToSetterCall__Outputs {
-  _call: SetFeeToSetterCall;
+export class UpdateChildInterfaceAddressCall__Outputs {
+  _call: UpdateChildInterfaceAddressCall;
 
-  constructor(call: SetFeeToSetterCall) {
+  constructor(call: UpdateChildInterfaceAddressCall) {
+    this._call = call;
+  }
+}
+
+export class UpdateChildSubImplementationAddressCall extends EthereumCall {
+  get inputs(): UpdateChildSubImplementationAddressCall__Inputs {
+    return new UpdateChildSubImplementationAddressCall__Inputs(this);
+  }
+
+  get outputs(): UpdateChildSubImplementationAddressCall__Outputs {
+    return new UpdateChildSubImplementationAddressCall__Outputs(this);
+  }
+}
+
+export class UpdateChildSubImplementationAddressCall__Inputs {
+  _call: UpdateChildSubImplementationAddressCall;
+
+  constructor(call: UpdateChildSubImplementationAddressCall) {
+    this._call = call;
+  }
+
+  get _childSubImplementationAddress(): Address {
+    return this._call.inputValues[0].value.toAddress();
+  }
+}
+
+export class UpdateChildSubImplementationAddressCall__Outputs {
+  _call: UpdateChildSubImplementationAddressCall;
+
+  constructor(call: UpdateChildSubImplementationAddressCall) {
     this._call = call;
   }
 }

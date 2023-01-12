@@ -355,6 +355,15 @@ export class Pair extends Entity {
     this.set("totalSupply", Value.fromBigDecimal(value));
   }
 
+  get fee(): BigDecimal {
+    let value = this.get("fee");
+    return value.toBigDecimal();
+  }
+
+  set fee(value: BigDecimal) {
+    this.set("fee", Value.fromBigDecimal(value));
+  }
+
   get reserveETH(): BigDecimal {
     let value = this.get("reserveETH");
     return value.toBigDecimal();

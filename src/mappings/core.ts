@@ -8,7 +8,7 @@ import {
   Mint as MintEvent,
   Burn as BurnEvent,
   Swap as SwapEvent,
-  Bundle
+  Bundle,
 } from '../types/schema'
 import { Pair as PairContract, Mint, Burn, Swap, Transfer, Sync } from '../types/templates/Pair/Pair'
 import { updatePairDayData, updateTokenDayData, updateUniswapDayData, updatePairHourData } from './dayUpdates'
@@ -22,7 +22,7 @@ import {
   createLiquidityPosition,
   ZERO_BD,
   BI_18,
-  createLiquiditySnapshot
+  createLiquiditySnapshot,
 } from './helpers'
 
 function isCompleteMint(mintId: string): boolean {
@@ -72,10 +72,7 @@ export function handleTransfer(event: Transfer): void {
     // create new mint if no mints so far or if last one is done already
     if (mints.length === 0 || isCompleteMint(mints[mints.length - 1])) {
       let mint = new MintEvent(
-        event.transaction.hash
-          .toHexString()
-          .concat('-')
-          .concat(BigInt.fromI32(mints.length).toString())
+        event.transaction.hash.toHexString().concat('-').concat(BigInt.fromI32(mints.length).toString())
       )
       mint.transaction = transaction.id
       mint.pair = pair.id
@@ -98,10 +95,7 @@ export function handleTransfer(event: Transfer): void {
   if (event.params.to.toHexString() == pair.id) {
     let burns = transaction.burns
     let burn = new BurnEvent(
-      event.transaction.hash
-        .toHexString()
-        .concat('-')
-        .concat(BigInt.fromI32(burns.length).toString())
+      event.transaction.hash.toHexString().concat('-').concat(BigInt.fromI32(burns.length).toString())
     )
     burn.transaction = transaction.id
     burn.pair = pair.id
@@ -134,10 +128,7 @@ export function handleTransfer(event: Transfer): void {
         burn = currentBurn as BurnEvent
       } else {
         burn = new BurnEvent(
-          event.transaction.hash
-            .toHexString()
-            .concat('-')
-            .concat(BigInt.fromI32(burns.length).toString())
+          event.transaction.hash.toHexString().concat('-').concat(BigInt.fromI32(burns.length).toString())
         )
         burn.transaction = transaction.id
         burn.needsComplete = false
@@ -148,10 +139,7 @@ export function handleTransfer(event: Transfer): void {
       }
     } else {
       burn = new BurnEvent(
-        event.transaction.hash
-          .toHexString()
-          .concat('-')
-          .concat(BigInt.fromI32(burns.length).toString())
+        event.transaction.hash.toHexString().concat('-').concat(BigInt.fromI32(burns.length).toString())
       )
       burn.transaction = transaction.id
       burn.needsComplete = false
@@ -215,6 +203,11 @@ export function handleSync(event: Sync): void {
   let token0 = Token.load(pair.token0)
   let token1 = Token.load(pair.token1)
   let uniswap = UniswapFactory.load(FACTORY_ADDRESS)
+  let pairContract = PairContract.bind(event.address)
+
+  if (pair !== null) {
+    pair.fee = pairContract.feeRatio()
+  }
 
   // reset factory liquidity by subtracting onluy tarcked liquidity
   uniswap.totalLiquidityETH = uniswap.totalLiquidityETH.minus(pair.trackedReserveETH as BigDecimal)
@@ -471,10 +464,7 @@ export function handleSwap(event: Swap): void {
   }
   let swaps = transaction.swaps
   let swap = new SwapEvent(
-    event.transaction.hash
-      .toHexString()
-      .concat('-')
-      .concat(BigInt.fromI32(swaps.length).toString())
+    event.transaction.hash.toHexString().concat('-').concat(BigInt.fromI32(swaps.length).toString())
   )
 
   // update swap event
