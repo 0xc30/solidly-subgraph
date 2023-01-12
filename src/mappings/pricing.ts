@@ -65,7 +65,7 @@ let WHITELIST: string[] = [
   '0xa47c8bf37f92abed4a126bda807a7b7498661acd', // WUST
   '0x1f9840a85d5af5bf1d1762f925bdaddc4201f984', // UNI
   '0x2260fac5e5542a773aa44fbcfedf7c193bc2c599', // WBTC
-  '0x5E8422345238F34275888049021821E8E08CAa1f', // FRAX ETH
+  '0x5e8422345238f34275888049021821e8e08caa1f', // FRAX ETH
 ]
 
 // minimum liquidity required to count towards tracked volume for pairs with small # of Lps
